@@ -5,35 +5,42 @@ def populate():
 
     add_page(cat=python_cat,
              title="Official Python Tutorial",
-             url="http://docs.python.org/2/tutorial/")
+             url="http://docs.python.org/2/tutorial/",
+             views=100)
 
     add_page(cat=python_cat,
              title="How to Think like a Computer Scientist",
-             url="http://www.greeneapress.com/thinkpython/")
+             url="http://www.greeneapress.com/thinkpython/",
+             views=200)
 
     add_page(cat=python_cat,
              title="Learn Python in 10 Minutes",
-             url="http://www.korokithakis.net/tutorial/python/")
+             url="http://www.korokithakis.net/tutorial/python/",
+             views=300)
 
     django_cat = add_cat('Django', 64, 32)
 
     add_page(cat=django_cat,
              title="Django Rocks",
-             url="http://www.djangorocks.com/")
+             url="http://www.djangorocks.com/",
+             views=400)
 
     add_page(cat=django_cat,
              title="How to Tango with Django",
-             url="http://www.tangowithdjango.com/")
+             url="http://www.tangowithdjango.com/",
+             views=500)
 
     frame_cat = add_cat('Other Frameworks', 32, 16)
 
     add_page(cat=frame_cat,
              title="Bottle",
-             url="http://bottlepy.org/docs/dev/")
+             url="http://bottlepy.org/docs/dev/",
+             views=10)
 
     add_page(cat=frame_cat,
              title="Flask",
-             url="http://flask.pocoo.org")
+             url="http://flask.pocoo.org",
+             views=20)
 
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
