@@ -1,5 +1,5 @@
-def encode(name):
+def encode_url(name):
     return name.replace(' ','_')
 
-def decode(url):
+def decode_url(url):
     return url.replace('_',' ')

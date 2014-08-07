@@ -2,10 +2,13 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 
+from utils import encode_url,decode_url
+
 from rango.models import Category
 from rango.models import Page
 
-from utils import encode,decode
+from rango.forms import CategoryForm
+from rango.forms import PageForm
 
 
 def index(request):
@@ -17,7 +20,7 @@ def index(request):
                     'pages':pages_list}
 
     for category in category_list:
-        category.url = encode(category.name)
+        category.url = encode_url(category.name)
 
     return render_to_response('rango/index.html', context_dict, context)
 
@@ -29,8 +32,9 @@ def about(request):
 def category(request, category_name_url):
     context = RequestContext(request)
 
-    category_name = decode(category_name_url)
-    context_dict = {'category_name':category_name}
+    category_name = decode_url(category_name_url)
+    context_dict = {'category_name':category_name,
+                    'category_name_url':category_name_url}
 
     try:
         category = Category.objects.get(name=category_name)
@@ -42,3 +46,44 @@ def category(request, category_name_url):
         pass
 
     return render_to_response('rango/category.html', context_dict, context)
+
+def add_category(request):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            return index(request)
+        else:
+            print form.errors
+    else:
+        form = CategoryForm()
+    return render_to_response('rango/add_category.html',{'form':form}, context)
+
+def add_page(request, category_name_url):
+    context = RequestContext(request)
+
+    category_name = decode_url(category_name_url)
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+            page = form.save(commit=False)
+
+            try:
+                cat = Category.objects.get(name=category_name)
+                page.category = cat
+            except Category.DoesNotExist:
+                print category_name
+                return render_to_response('rango/add_category.html',{},context)
+
+            page.views = 0
+            page.save()
+
+            print 'here'
+
+            return category(request, category_name_url)
+        else:
+            print form.errors
+    else:
+        page = PageForm()
+    return render_to_response('rango/add_page.html',{'category_name_url':category_name_url,'page':page},context)
